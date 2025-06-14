@@ -38,19 +38,7 @@ function CodeIDE() {
       }
     }
 
-    // Listen for messages from AgentInterface
-    const handleMessage = (event) => {
-      if (event.data.type === 'SEND_TO_IDE') {
-        setCode(event.data.code);
-        setLanguage(event.data.language);
-        addToTerminal('success', `Code received from agent and loaded into editor`);
-      }
-    };
-
-    window.addEventListener('message', handleMessage);
-
     return () => {
-      window.removeEventListener('message', handleMessage);
       if (sessionStart) {
         logActivity('session_end', 'Coding session ended', {
           duration: Date.now() - sessionStart.getTime(),
@@ -219,17 +207,10 @@ function CodeIDE() {
 
   const handleTerminalKeyPress = (e) => {
     if (e.key === 'Enter') {
-      e.preventDefault();
       if (terminalInput.trim()) {
         executeTerminalCommand(terminalInput);
         setTerminalInput('');
       }
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      // Add command history functionality later
-    } else if (e.key === 'Tab') {
-      e.preventDefault();
-      // Add autocomplete functionality later
     }
   };
 
@@ -548,16 +529,9 @@ function CodeIDE() {
                 type="text"
                 value={terminalInput}
                 onChange={(e) => setTerminalInput(e.target.value)}
-                onKeyDown={handleTerminalKeyPress}
+                onKeyPress={handleTerminalKeyPress}
                 placeholder="Type command and press Enter (try: help, run, clear)"
-                className="flex-1 bg-transparent text-green-400 outline-none placeholder-gray-500 border-none focus:ring-0"
-                autoFocus
-                style={{ 
-                  background: 'transparent',
-                  border: 'none',
-                  outline: 'none',
-                  boxShadow: 'none'
-                }}
+                className="flex-1 bg-transparent text-green-400 outline-none placeholder-gray-500"
               />
             </div>
           </div>

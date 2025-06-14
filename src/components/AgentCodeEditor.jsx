@@ -2,25 +2,12 @@ import React, { useState } from 'react';
 import Editor from '@monaco-editor/react';
 import { Copy, Download, Play, Save } from 'lucide-react';
 
-function AgentCodeEditor({ code, language = 'javascript', onSave, onRun, onAutoRun }) {
+function AgentCodeEditor({ code, language = 'javascript', onSave, onRun }) {
   const [editorCode, setEditorCode] = useState(code);
-
-  useEffect(() => {
-    setEditorCode(code);
-    // Auto-execute if onAutoRun is provided
-    if (onAutoRun && language === 'javascript') {
-      setTimeout(() => onAutoRun(code), 500);
-    }
-  }, [code]);
 
   const handleCopyCode = () => {
     navigator.clipboard.writeText(editorCode);
-    // Show better notification
-    const notification = document.createElement('div');
-    notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
-    notification.textContent = '✅ Code copied to clipboard!';
-    document.body.appendChild(notification);
-    setTimeout(() => document.body.removeChild(notification), 3000);
+    alert('Code copied to clipboard!');
   };
 
   const handleDownloadCode = () => {
@@ -40,28 +27,10 @@ function AgentCodeEditor({ code, language = 'javascript', onSave, onRun, onAutoR
       onRun(editorCode);
     } else if (language === 'javascript') {
       try {
-        console.log('🚀 Running agent-generated code:');
-        const result = eval(editorCode);
-        console.log('✅ Code executed successfully');
-        if (result !== undefined) {
-          console.log('Result:', result);
-        }
-        
-        // Show success notification
-        const notification = document.createElement('div');
-        notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
-        notification.textContent = '✅ Code executed successfully!';
-        document.body.appendChild(notification);
-        setTimeout(() => document.body.removeChild(notification), 3000);
+        console.log('Running agent-generated code:');
+        eval(editorCode);
       } catch (error) {
-        console.error('❌ Code execution error:', error);
-        
-        // Show error notification
-        const notification = document.createElement('div');
-        notification.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
-        notification.textContent = `❌ Error: ${error.message}`;
-        document.body.appendChild(notification);
-        setTimeout(() => document.body.removeChild(notification), 5000);
+        console.error('Code execution error:', error);
       }
     }
   };
@@ -72,13 +41,7 @@ function AgentCodeEditor({ code, language = 'javascript', onSave, onRun, onAutoR
     } else {
       // Save to local storage or trigger download
       localStorage.setItem('agent_generated_code', editorCode);
-      
-      // Show save notification
-      const notification = document.createElement('div');
-      notification.className = 'fixed top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
-      notification.textContent = '💾 Code saved locally!';
-      document.body.appendChild(notification);
-      setTimeout(() => document.body.removeChild(notification), 3000);
+      alert('Code saved locally!');
     }
   };
 
