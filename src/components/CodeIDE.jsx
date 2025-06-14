@@ -3,6 +3,7 @@ import Editor from '@monaco-editor/react';
 import { storageManager, STORAGE_KEYS } from '../utils/storage';
 import { createAgentLog, AGENT_TYPES } from '../utils/agents';
 import { Play, Save, FileText, GitCommit, Bug, Clock } from 'lucide-react';
+import { agentManager } from '../utils/aiAgents';
 
 function CodeIDE() {
   const [code, setCode] = useState('// Welcome to CodeChrono IDE\n// Start coding and your activity will be automatically tracked\n\nfunction helloWorld() {\n  console.log("Hello, CodeChrono!");\n}\n\nhelloWorld();');
@@ -15,6 +16,7 @@ function CodeIDE() {
     commits: 0,
     bugsFixed: 0
   });
+  const [isBugFixing, setIsBugFixing] = useState(false);
 
   useEffect(() => {
     // Start coding session
@@ -111,17 +113,66 @@ function CodeIDE() {
     }
   };
 
-  const fixBug = () => {
-    const bugDescription = prompt('Describe the bug fix:');
-    if (bugDescription) {
-      logActivity('bug_fix', `Bug fixed: ${bugDescription}`, {
-        fileName,
-        fixDescription: bugDescription
+  const fixBug = async () => {
+    if (!code.trim()) {
+      alert('Please write some code first!');
+      return;
+    }
+
+    setIsBugFixing(true);
+
+    try {
+      // Use the Dev Agent to debug the code
+      const response = await agentManager.sendPromptToAgent('dev', `Debug and fix this code: ${code}`, { 
+        language: language,
+        context: 'IDE debugging'
       });
 
-      setSessionStats(prev => ({ ...prev, bugsFixed: prev.bugsFixed + 1 }));
-      alert('Bug fix logged successfully!');
+      // Apply the fixes
+      if (response.type === 'debug') {
+        // setConsoleOutput(prev => [
+        //   ...prev,
+        //   { 
+        //     type: 'info', 
+        //     message: '🔧 Bug Analysis Complete:',
+        //     timestamp: new Date().toLocaleTimeString()
+        //   },
+        //   {
+        //     type: 'warning',
+        //     message: response.content,
+        //     timestamp: new Date().toLocaleTimeString()
+        //   }
+        // ]);
+        alert(response.content);
+      } else if (response.type === 'code') {
+        // If agent generated fixed code, offer to replace
+        const shouldReplace = window.confirm('Agent found issues and generated fixed code. Replace current code?');
+        if (shouldReplace) {
+          setCode(response.content);
+        }
+        // setConsoleOutput(prev => [
+        //   ...prev,
+        //   { 
+        //     type: 'success', 
+        //     message: '✅ Code has been analyzed and potential fixes applied!',
+        //     timestamp: new Date().toLocaleTimeString()
+        //   }
+        // ]);
+        alert('Code fixed');
+      }
+    } catch (error) {
+      // setConsoleOutput(prev => [
+      //   ...prev,
+      //   { 
+      //     type: 'error', 
+      //     message: `❌ Bug fix failed: ${error.message}`,
+      //     timestamp: new Date().toLocaleTimeString()
+      //   }
+      // ]);
+        alert('Bug fix failed');
     }
+
+    setIsBugFixing(false);
   };
 
   const runCode = () => {

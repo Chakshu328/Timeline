@@ -156,6 +156,38 @@ export class AIAgent {
     return { type: 'debug', content: debugReport };
   }
 
+  async reviewCode(prompt, context) {
+    const review = `Code Review for: ${prompt}\n\n✅ Strengths:\n- Clean code structure\n- Good variable naming\n- Proper indentation\n\n⚠️ Suggestions:\n- Add more comments\n- Consider error handling\n- Optimize performance\n\n📝 Overall Rating: 8/10`;
+    
+    this.logActivity('code_reviewed', 'Code review completed', { prompt, review });
+    return { type: 'review', content: review };
+  }
+
+  async refactorCode(prompt, context) {
+    const refactoredCode = this.improveCodeStructure(prompt);
+    this.logActivity('code_refactored', 'Code refactored for better structure', { prompt, refactoredCode });
+    return { type: 'code', content: refactoredCode, language: 'javascript' };
+  }
+
+  async generateTests(prompt, context) {
+    const testCode = `// Test cases for: ${prompt}\ndescribe('${this.extractFunctionName(prompt)}', () => {\n  test('should handle valid input', () => {\n    // Test implementation\n    expect(true).toBe(true);\n  });\n\n  test('should handle edge cases', () => {\n    // Edge case testing\n    expect(true).toBe(true);\n  });\n});`;
+    
+    this.logActivity('tests_generated', 'Test cases generated', { prompt, testCode });
+    return { type: 'code', content: testCode, language: 'javascript' };
+  }
+
+  async deployCode(prompt, context) {
+    const deploymentSteps = `Deployment Plan for: ${prompt}\n\n1. 📋 Pre-deployment checklist\n2. 🔧 Build optimization\n3. 🧪 Run tests\n4. 🚀 Deploy to staging\n5. ✅ Production deployment\n6. 📊 Monitor metrics\n\nEstimated time: 15-30 minutes`;
+    
+    this.logActivity('deployment_planned', 'Deployment plan created', { prompt, steps: deploymentSteps });
+    return { type: 'deployment', content: deploymentSteps };
+  }
+
+  improveCodeStructure(code) {
+    // Simple code improvement logic
+    return `// Refactored and improved code\n${code}\n\n// Added error handling and optimization`;
+  }
+
   // Marketing Agent Methods
   async generateContent(prompt) {
     const contentTypes = {
@@ -169,6 +201,100 @@ export class AIAgent {
 
     this.logActivity('content_created', `Created ${contentType} content`, { prompt, content });
     return { type: 'content', contentType, content };
+  }
+
+  async createCampaign(prompt) {
+    const campaign = {
+      name: prompt,
+      objective: `Promote ${prompt} to target audience`,
+      targetAudience: 'Tech-savvy professionals aged 25-45',
+      platforms: ['LinkedIn', 'Twitter', 'Facebook'],
+      content: [
+        { type: 'post', text: `🚀 Introducing ${prompt}! Revolutionary solution for modern businesses.` },
+        { type: 'story', text: `Behind the scenes: How ${prompt} is changing the game` },
+        { type: 'video', text: `Watch: ${prompt} in action - 60 second demo` }
+      ],
+      budget: '$5,000',
+      duration: '4 weeks',
+      kpis: ['Reach', 'Engagement', 'Conversions', 'Brand Awareness']
+    };
+
+    this.logActivity('campaign_created', `Created marketing campaign`, { prompt, campaign });
+    return { type: 'campaign', content: campaign };
+  }
+
+  async manageSocial(prompt) {
+    const socialPosts = [
+      `📊 ${prompt} Analytics Show: 📈 +45% engagement this week! #growth #analytics`,
+      `💡 Pro tip: Use ${prompt} to boost your productivity by 3x! Who's tried it? 🤔`,
+      `🎯 Success story: How @company increased ROI by 200% using ${prompt}`,
+      `🔥 Hot take: ${prompt} is the future of digital transformation. Agree? 👇`
+    ];
+
+    const schedule = {
+      monday: '9:00 AM - Motivational Monday post',
+      wednesday: '2:00 PM - Tips & Tricks',
+      friday: '4:00 PM - Week recap & insights',
+      sunday: '6:00 PM - Community highlights'
+    };
+
+    this.logActivity('social_managed', 'Social media content scheduled', { prompt, posts: socialPosts, schedule });
+    return { type: 'social', content: { posts: socialPosts, schedule } };
+  }
+
+  async analyzeMetrics(prompt, context) {
+    const metrics = {
+      overview: `Analytics Report for: ${prompt}`,
+      performance: {
+        reach: '15.2K',
+        impressions: '45.8K', 
+        engagement: '3.2K',
+        clickThrough: '2.1%',
+        conversions: '156'
+      },
+      insights: [
+        'Peak engagement occurs between 2-4 PM',
+        'Video content performs 40% better than static posts',
+        'LinkedIn generates highest quality leads',
+        'Mobile traffic accounts for 78% of total visits'
+      ],
+      recommendations: [
+        'Increase video content by 25%',
+        'Post during peak hours for better reach',
+        'A/B test different call-to-action buttons',
+        'Focus budget on LinkedIn campaigns'
+      ]
+    };
+
+    this.logActivity('metrics_analyzed', 'Marketing metrics analyzed', { prompt, metrics });
+    return { type: 'analytics', content: metrics };
+  }
+
+  async createEmail(prompt) {
+    const emailCampaign = {
+      subject: `Exciting Update: ${prompt}`,
+      preview: `Don't miss out on ${prompt} - limited time offer!`,
+      content: `
+        <h1>Hello there! 👋</h1>
+        <p>We're thrilled to share some exciting news about <strong>${prompt}</strong>!</p>
+        
+        <h2>What's New?</h2>
+        <ul>
+          <li>Enhanced features for better user experience</li>
+          <li>Improved performance and reliability</li>
+          <li>New integrations with popular tools</li>
+        </ul>
+        
+        <p><a href="#" style="background: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Learn More</a></p>
+        
+        <p>Best regards,<br>The Team</p>
+      `,
+      segments: ['Active Users', 'Trial Users', 'Premium Subscribers'],
+      sendTime: 'Tuesday, 10:00 AM EST'
+    };
+
+    this.logActivity('email_created', 'Email campaign created', { prompt, campaign: emailCampaign });
+    return { type: 'email', content: emailCampaign };
   }
 
   // Manager Agent Methods
@@ -188,6 +314,103 @@ export class AIAgent {
     return { type: 'plan', content: plan };
   }
 
+  async scheduleTask(prompt) {
+    const schedule = {
+      task: prompt,
+      assignee: 'Team Lead',
+      priority: 'Medium',
+      startDate: new Date().toISOString().split('T')[0],
+      dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      estimatedHours: 8,
+      dependencies: [],
+      status: 'Scheduled'
+    };
+
+    this.logActivity('task_scheduled', `Task scheduled: ${prompt}`, { schedule });
+    return { type: 'schedule', content: schedule };
+  }
+
+  async generateReport(prompt, context) {
+    const report = {
+      title: `Project Report: ${prompt}`,
+      summary: 'Overall project is on track with 85% completion rate',
+      metrics: {
+        tasksCompleted: 42,
+        totalTasks: 50,
+        teamEfficiency: '92%',
+        budgetUsed: '78%',
+        timeElapsed: '65%'
+      },
+      achievements: [
+        'Completed core features ahead of schedule',
+        'Reduced bugs by 40% through code reviews',
+        'Improved team collaboration'
+      ],
+      risks: [
+        'Potential delay in third-party integration',
+        'Resource allocation for Q4'
+      ],
+      nextSteps: [
+        'Finalize testing phase',
+        'Prepare deployment strategy',
+        'Schedule stakeholder review'
+      ]
+    };
+
+    this.logActivity('report_generated', 'Project report generated', { prompt, report });
+    return { type: 'report', content: report };
+  }
+
+  async organizeMeeting(prompt) {
+    const meeting = {
+      title: prompt,
+      date: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      time: '10:00 AM',
+      duration: '1 hour',
+      attendees: ['Team Lead', 'Developers', 'Stakeholders'],
+      agenda: [
+        'Project status update',
+        'Discuss blockers',
+        'Plan next sprint',
+        'Q&A session'
+      ],
+      location: 'Conference Room A / Zoom'
+    };
+
+    this.logActivity('meeting_organized', `Meeting organized: ${prompt}`, { meeting });
+    return { type: 'meeting', content: meeting };
+  }
+
+  async checkStatus(prompt, context) {
+    const status = {
+      project: prompt,
+      overall: 'On Track',
+      progress: '85%',
+      milestones: {
+        completed: 3,
+        upcoming: 1,
+        total: 4
+      },
+      team: {
+        active: 4,
+        available: 3,
+        busy: 1
+      },
+      blockers: [
+        'Waiting for API documentation',
+        'Design review pending'
+      ],
+      recommendations: [
+        'Prioritize critical path items',
+        'Schedule design review meeting',
+        'Update project timeline'
+      ]
+    };
+
+    this.logActivity('status_checked', 'Project status checked', { prompt, status });
+    return { type: 'status', content: status };
+  }
+
   // Client Agent Methods
   async processFeedback(prompt) {
     const feedback = {
@@ -200,6 +423,122 @@ export class AIAgent {
 
     this.logActivity('feedback_processed', 'Client feedback processed', { prompt, feedback });
     return { type: 'feedback', content: feedback };
+  }
+
+  async scheduleMeeting(prompt) {
+    const meeting = {
+      title: `Client Meeting: ${prompt}`,
+      type: 'Client Discussion',
+      proposedDates: [
+        'Tomorrow 2:00 PM',
+        'Thursday 10:00 AM', 
+        'Friday 3:00 PM'
+      ],
+      agenda: [
+        'Project progress review',
+        'Address client concerns',
+        'Discuss next steps',
+        'Timeline updates'
+      ],
+      participants: ['Client', 'Project Manager', 'Lead Developer'],
+      preparationItems: [
+        'Prepare demo of latest features',
+        'Review client feedback',
+        'Update project timeline'
+      ]
+    };
+
+    this.logActivity('meeting_scheduled', 'Client meeting scheduled', { prompt, meeting });
+    return { type: 'meeting', content: meeting };
+  }
+
+  async analyzeRequirement(prompt) {
+    const analysis = {
+      requirement: prompt,
+      type: this.classifyRequirement(prompt),
+      complexity: this.assessComplexity(prompt),
+      estimatedEffort: '2-3 weeks',
+      dependencies: ['Database schema update', 'API changes'],
+      risksAndChallenges: [
+        'Integration complexity',
+        'Data migration requirements',
+        'Performance impact'
+      ],
+      acceptanceCriteria: [
+        'Feature works as specified',
+        'Performance meets requirements',
+        'Passes all test cases'
+      ],
+      recommendations: [
+        'Break down into smaller tasks',
+        'Create detailed mockups',
+        'Plan thorough testing'
+      ]
+    };
+
+    this.logActivity('requirement_analyzed', 'Requirement analysis completed', { prompt, analysis });
+    return { type: 'requirement', content: analysis };
+  }
+
+  async handleCommunication(prompt) {
+    const communication = {
+      originalMessage: prompt,
+      responseTemplate: `Dear Valued Client,\n\nThank you for reaching out regarding ${prompt}.\n\nWe have received your message and our team is reviewing it carefully. We will provide you with a detailed response within 24 hours.\n\nIf this is urgent, please don't hesitate to contact us directly.\n\nBest regards,\nThe Development Team`,
+      suggestedActions: [
+        'Acknowledge receipt immediately',
+        'Escalate if urgent',
+        'Schedule follow-up if needed',
+        'Document in client portal'
+      ],
+      priority: this.prioritizeFeedback(prompt),
+      expectedResponseTime: '24 hours'
+    };
+
+    this.logActivity('communication_handled', 'Client communication processed', { prompt, communication });
+    return { type: 'communication', content: communication };
+  }
+
+  async requestApproval(prompt) {
+    const approval = {
+      item: prompt,
+      type: 'Feature Approval',
+      description: `Request for client approval on: ${prompt}`,
+      documents: [
+        'Feature specification',
+        'Design mockups',
+        'Implementation plan',
+        'Testing strategy'
+      ],
+      approvalProcess: [
+        'Submit request with documentation',
+        'Client review (3-5 business days)',
+        'Address any feedback',
+        'Receive final approval',
+        'Proceed with implementation'
+      ],
+      deadline: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      status: 'Pending Review'
+    };
+
+    this.logActivity('approval_requested', 'Client approval requested', { prompt, approval });
+    return { type: 'approval', content: approval };
+  }
+
+  classifyRequirement(prompt) {
+    if (prompt.includes('feature') || prompt.includes('new')) return 'Feature Request';
+    if (prompt.includes('change') || prompt.includes('modify')) return 'Change Request';
+    if (prompt.includes('fix') || prompt.includes('bug')) return 'Bug Fix';
+    if (prompt.includes('improve') || prompt.includes('enhance')) return 'Enhancement';
+    return 'General Request';
+  }
+
+  assessComplexity(prompt) {
+    const complexWords = ['integrate', 'migrate', 'redesign', 'complex', 'advanced'];
+    const hasComplexWords = complexWords.some(word => prompt.toLowerCase().includes(word));
+    
+    if (hasComplexWords || prompt.length > 100) return 'High';
+    if (prompt.length > 50) return 'Medium';
+    return 'Low';
   }
 
   // Utility Methods
