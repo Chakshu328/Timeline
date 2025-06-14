@@ -164,7 +164,7 @@ function AgentInterface() {
                         if (code.includes('function') && code.includes('Component')) {
                           // Create a preview window
                           const previewWindow = window.open('', '_blank', 'width=800,height=600');
-                          previewWindow.document.write(\`
+                          previewWindow.document.write(`
                             <!DOCTYPE html>
                             <html>
                             <head>
@@ -178,7 +178,7 @@ function AgentInterface() {
                             <body>
                               <div id="root"></div>
                               <script type="text/babel">
-                                \${code.replace('export default', 'const ComponentToRender =')}
+                                ${code.replace('export default', 'const ComponentToRender =')}
                                 
                                 const App = () => {
                                   return React.createElement(ComponentToRender);
@@ -188,7 +188,7 @@ function AgentInterface() {
                               </script>
                             </body>
                             </html>
-                          \`);
+                          `);</old_str>
                         } else {
                           // Execute regular JavaScript
                           eval(code);
@@ -206,7 +206,7 @@ function AgentInterface() {
                         // Show error message
                         const errorDiv = document.createElement('div');
                         errorDiv.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
-                        errorDiv.textContent = \`Error: \${error.message}\`;
+                        errorDiv.textContent = `Error: ${error.message}`;
                         document.body.appendChild(errorDiv);
                         setTimeout(() => document.body.removeChild(errorDiv), 5000);
                       }
