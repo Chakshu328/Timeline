@@ -2,6 +2,7 @@
 // AI Agent System for CodeChrono IDE
 import { createAgentLog, AGENT_TYPES } from './agents';
 import { storageManager, STORAGE_KEYS } from './storage';
+import { imageGenerator } from './imageGenerator';
 
 export class AIAgent {
   constructor(type, name, capabilities = []) {
@@ -1110,23 +1111,49 @@ export default ${pageName}Page;`;
   }
 
   async generateImage(prompt) {
-    // Simulate image generation with placeholder service
     const imagePrompt = prompt.replace(/generate|create|make|image|picture|photo/gi, '').trim();
-    const imageDescription = `AI-generated image for: ${imagePrompt}`;
     
-    // Using placeholder image service (in real implementation, you'd use DALL-E, Midjourney, etc.)
-    const imageUrl = `https://picsum.photos/400/300?random=${Date.now()}`;
-    
-    this.logActivity('image_generated', `Generated image for: ${imagePrompt}`, { prompt, imageUrl });
-    
-    return {
-      type: 'image',
-      content: {
-        url: imageUrl,
-        description: imageDescription,
-        prompt: imagePrompt
-      }
-    };
+    try {
+      // Use the real image generator
+      const result = await imageGenerator.generateImage(imagePrompt, {
+        width: 512,
+        height: 512,
+        style: 'realistic'
+      });
+      
+      this.logActivity('image_generated', `Generated image for: ${imagePrompt}`, { 
+        prompt, 
+        imageUrl: result.url,
+        method: result.method 
+      });
+      
+      return {
+        type: 'image',
+        content: {
+          url: result.url,
+          description: result.description,
+          prompt: imagePrompt,
+          method: result.method,
+          keywords: result.keywords || ''
+        }
+      };
+    } catch (error) {
+      console.error('Image generation failed:', error);
+      
+      // Fallback to placeholder
+      const fallbackUrl = `https://via.placeholder.com/512x300/6366f1/ffffff?text=${encodeURIComponent(imagePrompt.substring(0, 20))}`;
+      
+      return {
+        type: 'image',
+        content: {
+          url: fallbackUrl,
+          description: `Placeholder for: ${imagePrompt}`,
+          prompt: imagePrompt,
+          method: 'fallback',
+          error: error.message
+        }
+      };
+    }
   }
 
   shouldGenerateImage(prompt) {

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { agentManager } from '../utils/aiAgents';
 import { AGENT_TYPES, AGENT_CONFIG } from '../utils/agents';
@@ -53,7 +52,7 @@ function AgentInterface() {
 
     try {
       const response = await agentManager.sendPromptToAgent(selectedAgent, currentPrompt);
-      
+
       const agentMessage = {
         id: Date.now() + 1,
         type: 'agent',
@@ -91,7 +90,7 @@ function AgentInterface() {
 
     try {
       const responses = await agentManager.sendPromptToAllAgents(currentPrompt);
-      
+
       // Add responses to each agent's conversation
       Object.entries(responses).forEach(([agentType, response]) => {
         const userMessage = {
@@ -290,7 +289,7 @@ function AgentInterface() {
           const Icon = getAgentIcon(key);
           const isActive = selectedAgent === key;
           const status = agentStatuses[key];
-          
+
           return (
             <button
               key={key}
@@ -366,7 +365,7 @@ function AgentInterface() {
             All Agents
           </button>
         </div>
-        
+
         <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
           Try: "Create a login function", "Write a marketing campaign", "Plan a project timeline", "Process client feedback"
         </div>

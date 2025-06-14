@@ -213,7 +213,7 @@ function App() {
         return (
           <div className="p-6 space-y-6">
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Settings</h1>
-            
+
             {/* Appearance Settings */}
             <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Appearance</h3>
