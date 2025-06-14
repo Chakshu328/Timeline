@@ -153,75 +153,6 @@ function AgentInterface() {
                 <AgentCodeEditor 
                   code={message.content.content} 
                   language={message.content.language || 'javascript'}
-                  onRun={(code) => {
-                    // Execute code directly
-                    if (message.content.language === 'javascript' || message.content.language === 'jsx') {
-                      try {
-                        console.log('🚀 Executing agent-generated code:');
-                        console.log(code);
-                        
-                        // For React components, show a preview
-                        if (code.includes('function') && code.includes('Component')) {
-                          // Create a preview window
-                          const previewWindow = window.open('', '_blank', 'width=800,height=600');
-                          previewWindow.document.write(\`
-                            <!DOCTYPE html>
-                            <html>
-                            <head>
-                              <title>Code Preview</title>
-                              <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-                              <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-                              <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-                              <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-                              <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.css">
-                            </head>
-                            <body>
-                              <div id="root"></div>
-                              <script type="text/babel">
-                                \${code.replace('export default', 'const ComponentToRender =')}
-                                
-                                const App = () => {
-                                  return React.createElement(ComponentToRender);
-                                };
-                                
-                                ReactDOM.render(React.createElement(App), document.getElementById('root'));
-                              </script>
-                            </body>
-                            </html>
-                          \`);
-                        } else {
-                          // Execute regular JavaScript
-                          eval(code);
-                        }
-                        
-                        // Show success message
-                        const successDiv = document.createElement('div');
-                        successDiv.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
-                        successDiv.textContent = 'Code executed successfully!';
-                        document.body.appendChild(successDiv);
-                        setTimeout(() => document.body.removeChild(successDiv), 3000);
-                        
-                      } catch (error) {
-                        console.error('Code execution error:', error);
-                        // Show error message
-                        const errorDiv = document.createElement('div');
-                        errorDiv.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
-                        errorDiv.textContent = \`Error: \${error.message}\`;
-                        document.body.appendChild(errorDiv);
-                        setTimeout(() => document.body.removeChild(errorDiv), 5000);
-                      }
-                    }
-                  }}
-                  onSave={(code) => {
-                    // Auto-save to Code IDE
-                    localStorage.setItem('agent_generated_code', code);
-                    // Show save confirmation
-                    const saveDiv = document.createElement('div');
-                    saveDiv.className = 'fixed top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
-                    saveDiv.textContent = 'Code saved to Code IDE!';
-                    document.body.appendChild(saveDiv);
-                    setTimeout(() => document.body.removeChild(saveDiv), 3000);
-                  }}
                 />
               </div>
             ) : message.content.type === 'plan' ? (
@@ -295,42 +226,16 @@ function AgentInterface() {
                     src={message.content.content.url} 
                     alt={message.content.content.description}
                     className="w-full max-w-sm rounded-lg shadow-sm"
-                    onLoad={(e) => {
-                      e.target.style.display = 'block';
-                      if (e.target.nextSibling) e.target.nextSibling.style.display = 'none';
-                    }}
                     onError={(e) => {
                       e.target.style.display = 'none';
-                      if (e.target.nextSibling) e.target.nextSibling.style.display = 'block';
+                      e.target.nextSibling.style.display = 'block';
                     }}
                   />
                   <div className="hidden p-4 bg-gray-100 dark:bg-gray-600 rounded-lg text-center">
-                    <div className="animate-pulse">
-                      <div className="w-full h-32 bg-gray-300 dark:bg-gray-500 rounded mb-2"></div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">Loading image...</p>
-                    </div>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Image placeholder</p>
                     <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">{message.content.content.description}</p>
                   </div>
                   <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{message.content.content.description}</p>
-                  <div className="mt-3 flex gap-2">
-                    <button
-                      onClick={() => window.open(message.content.content.url, '_blank')}
-                      className="px-3 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600"
-                    >
-                      View Full Size
-                    </button>
-                    <button
-                      onClick={() => {
-                        const link = document.createElement('a');
-                        link.href = message.content.content.url;
-                        link.download = 'generated-image.jpg';
-                        link.click();
-                      }}
-                      className="px-3 py-1 bg-green-500 text-white rounded text-xs hover:bg-green-600"
-                    >
-                      Download
-                    </button>
-                  </div>
                 </div>
               </div>
             ) : (

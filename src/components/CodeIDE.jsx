@@ -30,18 +30,8 @@ function CodeIDE() {
 
   useEffect(() => {
     setSessionStart(new Date());
-    
-    // Load saved code or agent-generated code
     const savedCode = storageManager.get(STORAGE_KEYS.CODE_SESSIONS);
-    const agentCode = localStorage.getItem('agent_generated_code');
-    
-    if (agentCode) {
-      // Prioritize agent-generated code
-      setCode(agentCode);
-      setFileName('agent-generated.jsx');
-      addToTerminal('info', 'Loaded agent-generated code');
-      localStorage.removeItem('agent_generated_code'); // Clean up
-    } else if (savedCode && savedCode.length > 0) {
+    if (savedCode && savedCode.length > 0) {
       const latestSession = savedCode[savedCode.length - 1];
       if (latestSession.code) {
         setCode(latestSession.code);
@@ -164,7 +154,6 @@ function CodeIDE() {
     addToTerminal('command', `$ ${command}`);
     
     const cmd = command.trim().toLowerCase();
-    const args = cmd.split(' ');
     
     if (cmd === 'clear') {
       setTerminalOutput([]);
@@ -172,19 +161,7 @@ function CodeIDE() {
     }
     
     if (cmd === 'help') {
-      addToTerminal('info', 'Available commands:');
-      addToTerminal('info', '  clear - Clear terminal');
-      addToTerminal('info', '  help - Show this help');
-      addToTerminal('info', '  run - Execute current code');
-      addToTerminal('info', '  ls - List files');
-      addToTerminal('info', '  pwd - Show current directory');
-      addToTerminal('info', '  date - Show current date/time');
-      addToTerminal('info', '  version - Show IDE version');
-      addToTerminal('info', '  code <filename> - Create/edit file');
-      addToTerminal('info', '  save - Save current file');
-      addToTerminal('info', '  npm install <package> - Install package');
-      addToTerminal('info', '  git status - Show git status');
-      addToTerminal('info', '  whoami - Show current user');
+      addToTerminal('info', 'Available commands: clear, help, run, ls, pwd, date, version');
       return;
     }
     
@@ -193,9 +170,8 @@ function CodeIDE() {
       return;
     }
     
-    if (cmd === 'ls' || cmd === 'dir') {
-      addToTerminal('success', `${fileName} (${code.split('\n').length} lines, ${code.length} bytes)`);
-      addToTerminal('info', 'package.json, README.md, node_modules/');
+    if (cmd === 'ls') {
+      addToTerminal('success', `${fileName} (${code.split('\n').length} lines)`);
       return;
     }
     
@@ -210,61 +186,15 @@ function CodeIDE() {
     }
     
     if (cmd === 'version') {
-      addToTerminal('success', 'CodeChrono IDE v2.0.0 - Enhanced Edition');
-      addToTerminal('info', 'Node.js v18.17.0, npm v9.6.7');
+      addToTerminal('success', 'CodeChrono IDE v1.0.0');
       return;
     }
     
-    if (cmd === 'whoami') {
-      addToTerminal('success', 'codechrono-developer');
-      return;
-    }
-    
-    if (args[0] === 'code' && args[1]) {
-      setFileName(args[1]);
-      addToTerminal('success', `Opened ${args[1]} in editor`);
-      return;
-    }
-    
-    if (cmd === 'save') {
-      saveCode();
-      return;
-    }
-    
-    if (args[0] === 'npm' && args[1] === 'install' && args[2]) {
-      addToTerminal('info', `Installing ${args[2]}...`);
-      setTimeout(() => {
-        addToTerminal('success', `✓ ${args[2]} installed successfully`);
-        addToTerminal('info', `+ ${args[2]}@latest`);
-      }, 1500);
-      return;
-    }
-    
-    if (cmd.startsWith('git')) {
-      if (args[1] === 'status') {
-        addToTerminal('info', 'On branch main');
-        addToTerminal('success', 'Your branch is up to date with origin/main');
-        addToTerminal('info', 'Changes not staged for commit:');
-        addToTerminal('warning', `  modified: ${fileName}`);
-      } else if (args[1] === 'add') {
-        addToTerminal('success', `Added ${args[2] || fileName} to staging`);
-      } else if (args[1] === 'commit') {
-        commitCode();
-      } else {
-        addToTerminal('info', 'Available git commands: status, add, commit');
-      }
-      return;
-    }
-    
-    // Execute JavaScript if it looks like JS code
-    if (cmd.startsWith('node ') || cmd.includes('.js') || cmd.includes('console.log')) {
+    // Simulate some JavaScript execution
+    if (cmd.startsWith('node ') || cmd.includes('.js')) {
       addToTerminal('info', 'Executing JavaScript...');
       try {
-        if (cmd.includes('console.log')) {
-          eval(command);
-        } else {
-          eval(code);
-        }
+        eval(code);
         addToTerminal('success', 'Code executed successfully');
       } catch (error) {
         addToTerminal('error', `Error: ${error.message}`);
@@ -272,30 +202,7 @@ function CodeIDE() {
       return;
     }
     
-    // System info commands
-    if (cmd === 'top' || cmd === 'ps') {
-      addToTerminal('info', 'PID   USER    %CPU  %MEM  COMMAND');
-      addToTerminal('success', '1234  user    2.1   1.5   codechrono-ide');
-      addToTerminal('success', '5678  user    0.8   0.3   node server.js');
-      return;
-    }
-    
-    if (cmd === 'df' || cmd === 'disk') {
-      addToTerminal('info', 'Filesystem     1K-blocks   Used Available Use%');
-      addToTerminal('success', '/dev/sda1       10485760 5242880   5242880  50%');
-      return;
-    }
-    
-    if (cmd === 'env') {
-      addToTerminal('info', 'Environment variables:');
-      addToTerminal('success', 'NODE_ENV=development');
-      addToTerminal('success', 'PATH=/usr/local/bin:/usr/bin:/bin');
-      addToTerminal('success', 'USER=codechrono-developer');
-      return;
-    }
-    
     addToTerminal('error', `Command not found: ${command}`);
-    addToTerminal('info', 'Type "help" for available commands');
   };
 
   const handleTerminalKeyPress = (e) => {
@@ -622,27 +529,9 @@ function CodeIDE() {
                 type="text"
                 value={terminalInput}
                 onChange={(e) => setTerminalInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    if (terminalInput.trim()) {
-                      executeTerminalCommand(terminalInput);
-                      setTerminalInput('');
-                    }
-                  } else if (e.key === 'ArrowUp') {
-                    e.preventDefault();
-                    // Get last command from history
-                    const lastCommand = terminalOutput
-                      .filter(line => line.type === 'command')
-                      .slice(-1)[0];
-                    if (lastCommand) {
-                      setTerminalInput(lastCommand.message.replace('$ ', ''));
-                    }
-                  }
-                }}
-                placeholder="Type command and press Enter (try: help, run, clear, code, npm, git)"
-                className="flex-1 bg-transparent text-green-400 outline-none placeholder-gray-500 focus:ring-0 focus:outline-none"
-                autoFocus
+                onKeyPress={handleTerminalKeyPress}
+                placeholder="Type command and press Enter (try: help, run, clear)"
+                className="flex-1 bg-transparent text-green-400 outline-none placeholder-gray-500"
               />
             </div>
           </div>
