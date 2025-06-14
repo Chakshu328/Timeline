@@ -143,12 +143,15 @@ export class AIAgent {
 
   generateLoginComponent(prompt) {
     return `import React, { useState } from 'react';
+import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Sparkles } from 'lucide-react';
 
 function LoginComponent() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [loginMode, setLoginMode] = useState('login'); // 'login' or 'signup'
 
   const validateForm = () => {
     const newErrors = {};
@@ -156,7 +159,7 @@ function LoginComponent() {
     if (!email) {
       newErrors.email = 'Email is required';
     } else if (!/\\S+@\\S+\\.\\S+/.test(email)) {
-      newErrors.email = 'Email is invalid';
+      newErrors.email = 'Please enter a valid email address';
     }
     
     if (!password) {
@@ -177,64 +180,181 @@ function LoginComponent() {
     setIsLoading(true);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Simulate API call with realistic delay
+      await new Promise(resolve => setTimeout(resolve, 1500));
       
-      // Handle successful login
-      console.log('Login successful!', { email });
-      alert('Login successful!');
+      // Handle successful login/signup
+      console.log(\`\${loginMode === 'login' ? 'Login' : 'Signup'} successful!\`, { email });
+      
+      // Show success message
+      const successDiv = document.createElement('div');
+      successDiv.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-pulse';
+      successDiv.textContent = \`\${loginMode === 'login' ? 'Login' : 'Account creation'} successful! Welcome!\`;
+      document.body.appendChild(successDiv);
+      
+      setTimeout(() => {
+        document.body.removeChild(successDiv);
+      }, 3000);
+      
+      // Reset form
+      setEmail('');
+      setPassword('');
+      setErrors({});
       
     } catch (error) {
-      console.error('Login failed:', error);
-      setErrors({ general: 'Login failed. Please try again.' });
+      console.error('Authentication failed:', error);
+      setErrors({ general: 'Authentication failed. Please try again.' });
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
-      
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Email
-          </label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter your email"
-          />
-          {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full mb-4">
+            <Sparkles className="w-8 h-8 text-white" />
+          </div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            {loginMode === 'login' ? 'Welcome Back!' : 'Create Account'}
+          </h1>
+          <p className="text-gray-600">
+            {loginMode === 'login' 
+              ? 'Sign in to access your account' 
+              : 'Join us and start your journey'
+            }
+          </p>
         </div>
-        
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Password
-          </label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter your password"
-          />
-          {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+
+        {/* Main Card */}
+        <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Email Field */}
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                <Mail className="w-4 h-4" />
+                Email Address
+              </label>
+              <div className="relative">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className={\`w-full px-4 py-3 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent \${
+                    errors.email ? 'border-red-300 bg-red-50' : 'border-gray-200 hover:border-gray-300'
+                  }\`}
+                  placeholder="Enter your email address"
+                />
+                {errors.email && (
+                  <div className="absolute -bottom-6 left-0 text-red-500 text-sm flex items-center gap-1">
+                    <span className="w-4 h-4 text-red-500">⚠</span>
+                    {errors.email}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Password Field */}
+            <div className="space-y-2 pt-2">
+              <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                <Lock className="w-4 h-4" />
+                Password
+              </label>
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className={\`w-full px-4 py-3 pr-12 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent \${
+                    errors.password ? 'border-red-300 bg-red-50' : 'border-gray-200 hover:border-gray-300'
+                  }\`}
+                  placeholder="Enter your password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-3 text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+                {errors.password && (
+                  <div className="absolute -bottom-6 left-0 text-red-500 text-sm flex items-center gap-1">
+                    <span className="w-4 h-4 text-red-500">⚠</span>
+                    {errors.password}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* General Error */}
+            {errors.general && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                <p className="text-red-700 text-sm flex items-center gap-2">
+                  <span className="w-4 h-4 text-red-500">⚠</span>
+                  {errors.general}
+                </p>
+              </div>
+            )}
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-6 rounded-xl font-semibold text-lg hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+            >
+              {isLoading ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Processing...
+                </>
+              ) : (
+                <>
+                  {loginMode === 'login' ? 'Sign In' : 'Create Account'}
+                  <ArrowRight className="w-5 h-5" />
+                </>
+              )}
+            </button>
+          </form>
+
+          {/* Mode Toggle */}
+          <div className="mt-6 text-center">
+            <p className="text-gray-600">
+              {loginMode === 'login' ? "Don't have an account?" : "Already have an account?"}
+              {' '}
+              <button
+                type="button"
+                onClick={() => {
+                  setLoginMode(loginMode === 'login' ? 'signup' : 'login');
+                  setErrors({});
+                }}
+                className="text-blue-600 hover:text-blue-700 font-semibold transition-colors"
+              >
+                {loginMode === 'login' ? 'Sign up' : 'Sign in'}
+              </button>
+            </p>
+          </div>
+
+          {/* Forgot Password */}
+          {loginMode === 'login' && (
+            <div className="mt-4 text-center">
+              <button
+                type="button"
+                onClick={() => alert('Password reset functionality would be implemented here')}
+                className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
+              >
+                Forgot your password?
+              </button>
+            </div>
+          )}
         </div>
-        
-        {errors.general && <p className="text-red-500 text-sm">{errors.general}</p>}
-        
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isLoading ? 'Logging in...' : 'Login'}
-        </button>
-      </form>
+
+        {/* Footer */}
+        <div className="mt-8 text-center text-sm text-gray-500">
+          By continuing, you agree to our Terms of Service and Privacy Policy
+        </div>
+      </div>
     </div>
   );
 }
