@@ -173,8 +173,80 @@ function AgentInterface() {
                   ))}
                 </div>
               </div>
+            ) : message.content.type === 'campaign' ? (
+              <div>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Marketing Campaign:</p>
+                <div className="space-y-3">
+                  <h4 className="font-semibold text-gray-900 dark:text-white">{message.content.content.name}</h4>
+                  <div className="bg-white dark:bg-gray-700 p-3 rounded">
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Objective:</p>
+                    <p className="text-gray-900 dark:text-white">{message.content.content.objective}</p>
+                  </div>
+                  <div className="bg-white dark:bg-gray-700 p-3 rounded">
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Target Audience:</p>
+                    <p className="text-gray-900 dark:text-white">{message.content.content.targetAudience}</p>
+                  </div>
+                  <div className="bg-white dark:bg-gray-700 p-3 rounded">
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Platforms:</p>
+                    <div className="flex gap-2 mt-1">
+                      {message.content.content.platforms.map((platform, index) => (
+                        <span key={index} className="px-2 py-1 bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-200 rounded text-xs">
+                          {platform}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="bg-white dark:bg-gray-700 p-3 rounded">
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Sample Content:</p>
+                    <div className="mt-2 space-y-2">
+                      {message.content.content.content.map((item, index) => (
+                        <div key={index} className="p-2 bg-gray-50 dark:bg-gray-600 rounded">
+                          <span className="font-medium text-xs text-gray-500 dark:text-gray-400">{item.type.toUpperCase()}:</span>
+                          <p className="text-sm text-gray-900 dark:text-white mt-1">{item.text}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="text-center p-2 bg-green-50 dark:bg-green-900 rounded">
+                      <p className="text-sm font-medium text-green-800 dark:text-green-200">{message.content.content.budget}</p>
+                      <p className="text-xs text-green-600 dark:text-green-400">Budget</p>
+                    </div>
+                    <div className="text-center p-2 bg-blue-50 dark:bg-blue-900 rounded">
+                      <p className="text-sm font-medium text-blue-800 dark:text-blue-200">{message.content.content.duration}</p>
+                      <p className="text-xs text-blue-600 dark:text-blue-400">Duration</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : message.content.type === 'image' ? (
+              <div>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Generated Image:</p>
+                <div className="bg-white dark:bg-gray-700 p-4 rounded-lg">
+                  <img 
+                    src={message.content.content.url} 
+                    alt={message.content.content.description}
+                    className="w-full max-w-sm rounded-lg shadow-sm"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.nextSibling.style.display = 'block';
+                    }}
+                  />
+                  <div className="hidden p-4 bg-gray-100 dark:bg-gray-600 rounded-lg text-center">
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Image placeholder</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">{message.content.content.description}</p>
+                  </div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{message.content.content.description}</p>
+                </div>
+              </div>
             ) : (
-              <p className="text-gray-900 dark:text-white">{message.content.content || message.content}</p>
+              <div className="text-gray-900 dark:text-white">
+                {typeof message.content === 'string' ? (
+                  <p>{message.content}</p>
+                ) : (
+                  <p>{message.content.content || JSON.stringify(message.content, null, 2)}</p>
+                )}
+              </div>
             )}
             <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               {new Date(message.timestamp).toLocaleTimeString()}

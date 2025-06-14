@@ -236,9 +236,9 @@ function App() {
                     <p className="text-sm text-gray-500 dark:text-gray-400">Adjust the default font size</p>
                   </div>
                   <select defaultValue="Medium" className="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
-                    <option>Small</option>
-                    <option>Medium</option>
-                    <option>Large</option>
+                    <option value="Small">Small</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Large">Large</option>
                   </select>
                 </div>
               </div>
