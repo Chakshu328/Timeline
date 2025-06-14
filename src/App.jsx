@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
@@ -9,6 +9,19 @@ import { storageManager } from './utils/storage';
 
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const saved = localStorage.getItem('darkMode');
+    return saved ? JSON.parse(saved) : false;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('darkMode', JSON.stringify(isDarkMode));
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDarkMode]);
 
   const handleExportData = () => {
     const data = storageManager.exportAllData();
@@ -33,6 +46,54 @@ function App() {
         return <Tasks />;
       case 'timeline':
         return <Timeline />;
+      case 'team':
+        return (
+          <div className="p-6">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Team Management</h1>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Team Members</h2>
+                <div className="space-y-3">
+                  {[
+                    { name: 'John Doe', role: 'Lead Developer', status: 'online', avatar: '#10B981' },
+                    { name: 'Sarah Chen', role: 'UI/UX Designer', status: 'away', avatar: '#F59E0B' },
+                    { name: 'Mike Johnson', role: 'Backend Developer', status: 'offline', avatar: '#EF4444' },
+                    { name: 'Emma Wilson', role: 'Project Manager', status: 'online', avatar: '#8B5CF6' }
+                  ].map((member, index) => (
+                    <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold" style={{ backgroundColor: member.avatar }}>
+                        {member.name.split(' ').map(n => n[0]).join('')}
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-medium text-gray-900 dark:text-white">{member.name}</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{member.role}</p>
+                      </div>
+                      <span className={`w-3 h-3 rounded-full ${member.status === 'online' ? 'bg-green-500' : member.status === 'away' ? 'bg-yellow-500' : 'bg-gray-400'}`}></span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Team Activity</h2>
+                <div className="space-y-3">
+                  {[
+                    { user: 'John Doe', action: 'committed code to main branch', time: '2 minutes ago' },
+                    { user: 'Sarah Chen', action: 'updated UI mockups', time: '15 minutes ago' },
+                    { user: 'Mike Johnson', action: 'fixed API endpoint bug', time: '1 hour ago' },
+                    { user: 'Emma Wilson', action: 'created new project milestone', time: '2 hours ago' }
+                  ].map((activity, index) => (
+                    <div key={index} className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                      <p className="text-sm text-gray-900 dark:text-white">
+                        <span className="font-medium">{activity.user}</span> {activity.action}
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{activity.time}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        );
       case 'agents':
         return (
           <div className="p-6">
@@ -78,10 +139,62 @@ function App() {
         );
       case 'settings':
         return (
-          <div className="p-6">
-            <h1 className="text-2xl font-bold text-gray-900 mb-6">Settings</h1>
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Data Management</h3>
+          <div className="p-6 space-y-6">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Settings</h1>
+            
+            {/* Appearance Settings */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Appearance</h3>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <label className="text-sm font-medium text-gray-900 dark:text-white">Dark Mode</label>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Toggle between light and dark themes</p>
+                  </div>
+                  <button
+                    onClick={() => setIsDarkMode(!isDarkMode)}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${isDarkMode ? 'bg-primary' : 'bg-gray-200'}`}
+                  >
+                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${isDarkMode ? 'translate-x-6' : 'translate-x-1'}`} />
+                  </button>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <label className="text-sm font-medium text-gray-900 dark:text-white">Font Size</label>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Adjust the default font size</p>
+                  </div>
+                  <select className="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                    <option>Small</option>
+                    <option selected>Medium</option>
+                    <option>Large</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Notifications */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Notifications</h3>
+              <div className="space-y-4">
+                {[
+                  { label: 'Email Notifications', desc: 'Receive email updates for important events' },
+                  { label: 'Push Notifications', desc: 'Get browser notifications for real-time updates' },
+                  { label: 'Task Reminders', desc: 'Receive reminders for upcoming deadlines' }
+                ].map((setting, index) => (
+                  <div key={index} className="flex items-center justify-between">
+                    <div>
+                      <label className="text-sm font-medium text-gray-900 dark:text-white">{setting.label}</label>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">{setting.desc}</p>
+                    </div>
+                    <input type="checkbox" defaultChecked className="h-4 w-4 text-primary border-gray-300 dark:border-gray-600 rounded" />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Data Management */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Data Management</h3>
               <div className="space-y-4">
                 <button
                   onClick={handleExportData}
@@ -111,11 +224,12 @@ function App() {
 
   return (
     <Router>
-      <div className="flex h-screen bg-gray-50">
+      <div className={`flex h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
         <Sidebar 
           activeTab={activeTab} 
           setActiveTab={setActiveTab}
           onExportData={handleExportData}
+          isDarkMode={isDarkMode}
         />
         <main className="flex-1 overflow-auto">
           {renderContent()}

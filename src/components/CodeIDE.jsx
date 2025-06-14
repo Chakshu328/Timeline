@@ -19,7 +19,7 @@ function CodeIDE() {
   useEffect(() => {
     // Start coding session
     setSessionStart(new Date());
-    
+
     // Load saved code if exists
     const savedCode = storageManager.get(STORAGE_KEYS.CODE_SESSIONS);
     if (savedCode && savedCode.length > 0) {
@@ -47,14 +47,14 @@ function CodeIDE() {
       sessionId: sessionStart?.getTime(),
       ...metadata
     });
-    
+
     const logs = storageManager.get(STORAGE_KEYS.LOGS) || [];
     storageManager.set(STORAGE_KEYS.LOGS, [...logs, log]);
   };
 
   const handleCodeChange = (value) => {
     setCode(value);
-    
+
     // Track code changes every 10 seconds
     if (value !== code) {
       setTimeout(() => {
@@ -81,7 +81,7 @@ function CodeIDE() {
       fileSize: code.length,
       linesOfCode: code.split('\n').length
     });
-    
+
     alert('Code saved successfully!');
   };
 
@@ -93,7 +93,7 @@ function CodeIDE() {
         commitMessage,
         linesOfCode: code.split('\n').length
       });
-      
+
       setSessionStats(prev => ({ ...prev, commits: prev.commits + 1 }));
       alert('Code committed successfully!');
     }
@@ -118,7 +118,7 @@ function CodeIDE() {
         fileName,
         fixDescription: bugDescription
       });
-      
+
       setSessionStats(prev => ({ ...prev, bugsFixed: prev.bugsFixed + 1 }));
       alert('Bug fix logged successfully!');
     }
@@ -129,7 +129,7 @@ function CodeIDE() {
       language,
       linesOfCode: code.split('\n').length
     });
-    
+
     // Simple console simulation for demo
     if (language === 'javascript') {
       try {
@@ -173,38 +173,38 @@ function CodeIDE() {
             </select>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <button
               onClick={runCode}
-              className="flex items-center gap-2 px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-sm"
+              className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700 transition-colors shadow-md"
             >
               <Play size={16} />
               Run
             </button>
             <button
               onClick={saveCode}
-              className="flex items-center gap-2 px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm"
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 transition-colors shadow-md"
             >
               <Save size={16} />
               Save
             </button>
             <button
               onClick={commitCode}
-              className="flex items-center gap-2 px-3 py-1 bg-purple-600 text-white rounded hover:bg-purple-700 text-sm"
+              className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg text-sm hover:bg-purple-700 transition-colors shadow-md"
             >
               <GitCommit size={16} />
               Commit
             </button>
             <button
               onClick={reportBug}
-              className="flex items-center gap-2 px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-sm"
+              className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700 transition-colors shadow-md"
             >
               <Bug size={16} />
               Report Bug
             </button>
             <button
               onClick={fixBug}
-              className="flex items-center gap-2 px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-sm"
+              className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700 transition-colors shadow-md"
             >
               <Bug size={16} />
               Fix Bug
