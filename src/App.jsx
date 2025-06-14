@@ -5,6 +5,7 @@ import Dashboard from './components/Dashboard';
 import CodeIDE from './components/CodeIDE';
 import Tasks from './components/Tasks';
 import Timeline from './components/Timeline';
+import AgentInterface from './components/AgentInterface';
 import { storageManager } from './utils/storage';
 
 function App() {
@@ -95,33 +96,7 @@ function App() {
           </div>
         );
       case 'agents':
-        return (
-          <div className="p-6">
-            <h1 className="text-2xl font-bold text-gray-900 mb-6">Agents</h1>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {Object.entries({
-                dev: { name: 'Dev Agent', color: '#10B981', description: 'Tracks code commits, debugging, and development activities' },
-                marketing: { name: 'Marketing Agent', color: '#F59E0B', description: 'Manages campaigns, content creation, and engagement tracking' },
-                manager: { name: 'Manager Agent', color: '#EF4444', description: 'Oversees project deadlines, status updates, and team coordination' },
-                client: { name: 'Client Agent', color: '#8B5CF6', description: 'Handles client feedback, meetings, and communication' }
-              }).map(([key, agent]) => (
-                <div key={key} className="bg-white p-6 rounded-xl border border-gray-200">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-4 h-4 rounded-full" style={{ backgroundColor: agent.color }}></div>
-                    <h3 className="text-lg font-semibold text-gray-900">{agent.name}</h3>
-                  </div>
-                  <p className="text-gray-600">{agent.description}</p>
-                  <div className="mt-4 pt-4 border-t border-gray-100">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-500">Status</span>
-                      <span className="text-green-600 font-medium">Active</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        );
+        return <AgentInterface />;
       case 'logs':
         return (
           <div className="p-6">
@@ -163,9 +138,9 @@ function App() {
                     <label className="text-sm font-medium text-gray-900 dark:text-white">Font Size</label>
                     <p className="text-sm text-gray-500 dark:text-gray-400">Adjust the default font size</p>
                   </div>
-                  <select className="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                  <select defaultValue="Medium" className="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
                     <option>Small</option>
-                    <option selected>Medium</option>
+                    <option>Medium</option>
                     <option>Large</option>
                   </select>
                 </div>
