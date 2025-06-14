@@ -154,6 +154,44 @@ function AgentInterface() {
                   code={message.content.content} 
                   language={message.content.language || 'javascript'}
                 />
+                <button
+                  onClick={() => {
+                    const code = message.content.content;
+                    if (code.includes('function') && code.includes('Component')) {
+                      // Create a preview window
+                      const previewWindow = window.open('', '_blank', 'width=800,height=600');
+                      previewWindow.document.write(`
+                            <!DOCTYPE html>
+                            <html>
+                            <head>
+                              <title>React Component Preview</title>
+                              <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+                              <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+                              <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+                            </head>
+                            <body>
+                              <div id="root"></div>
+                              <script type="text/babel">
+                                ${code.replace('export default', 'const ComponentToRender =')}
+
+                                const App = () => {
+                                  return React.createElement(ComponentToRender);
+                                };
+
+                                ReactDOM.render(React.createElement(App), document.getElementById('root'));
+                              </script>
+                            </body>
+                            </html>
+                          `);
+                        } else {
+                          // Execute regular JavaScript
+                          eval(code);
+                        }
+                  }}
+                  className="px-3 py-1 bg-blue-500 text-white rounded text-sm mt-2 hover:bg-blue-700"
+                >
+                  Run Code
+                </button>
               </div>
             ) : message.content.type === 'plan' ? (
               <div>
