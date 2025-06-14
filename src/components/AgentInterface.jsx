@@ -188,7 +188,8 @@ function AgentInterface() {
                               </script>
                             </body>
                             </html>
-                          `);</old_str>
+                          `);
+                        } else {</old_str>
                         } else {
                           // Execute regular JavaScript
                           eval(code);
